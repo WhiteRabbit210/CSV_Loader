@@ -1,0 +1,13 @@
+社員番号,姓,名,メールアドレス,部署名,役職,入社日
+E001,山田,太郎,yamada.taro@example.com,営業部,部長,2015-04-01
+E002,鈴木,花子,suzuki.hanako@example.com,人事部,課長,2016-07-15
+E003,佐藤,一郎,sato.ichiro@example.com,開発部,主任,2018-01-10
+E004,田中,美咲,tanaka.misaki@example.com,経理部,一般社員,2019-09-01
+E005,高橋,健太,takahashi.kenta@example.com,営業部,課長,2017-03-20
+E006,伊藤,真由美,ito.mayumi@example.com,開発部,リーダー,2018-06-01
+E007,渡辺,大輔,watanabe.daisuke@example.com,総務部,主任,2020-02-15
+E008,中村,さくら,nakamura.sakura@example.com,マーケティング部,一般社員,2021-04-01
+E009,小林,翔太,kobayashi.shota@example.com,開発部,シニアエンジニア,2016-11-01
+E010,加藤,愛子,kato.aiko@example.com,人事部,一般社員,2022-01-15
+E011,吉田,健一,yoshida.kenichi@example.com,営業部,主任,2019-05-20
+E012,山本,由美,yamamoto.yumi@example.com,経理部,課長,2017-08-10

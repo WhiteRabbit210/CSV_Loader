@@ -128,7 +128,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, getCurrentInstance } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useCsvStore } from '@/stores/csv'
@@ -137,6 +137,8 @@ import { apiConfig } from '@/config/api'
 
 const router = useRouter()
 const csvStore = useCsvStore()
+const instance = getCurrentInstance()
+const logger = instance.appContext.config.globalProperties.$logger
 
 const activeTab = ref('add')
 const loading = ref(false)
@@ -153,6 +155,12 @@ const deleteUsers = ref([])
 
 const loadSyncPreview = async () => {
   try {
+    logger.info('Loading sync preview', {
+      hasUploadData: !!csvStore.uploadData,
+      sessionId: csvStore.uploadData?.session_id,
+      mappingConfig: csvStore.mappingConfig
+    })
+    
     const response = await http.post(apiConfig.endpoints.syncPreview, {
       csvData: {
         session_id: csvStore.uploadData.session_id,
@@ -162,6 +170,11 @@ const loadSyncPreview = async () => {
       mapping: csvStore.mappingConfig
     })
     
+    logger.info('Sync preview response', {
+      success: response.data.success,
+      summary: response.data.summary
+    })
+    
     if (response.data.success) {
       syncSummary.value = response.data.summary
       newUsers.value = response.data.newUsers || []
@@ -169,7 +182,10 @@ const loadSyncPreview = async () => {
       deleteUsers.value = response.data.deleteUsers || []
     }
   } catch (error) {
-    console.error('Failed to load sync preview:', error)
+    logger.error('Failed to load sync preview', error, {
+      uploadData: csvStore.uploadData,
+      mappingConfig: csvStore.mappingConfig
+    })
     ElMessage.error('同期プレビューの読み込みに失敗しました')
   }
 }
@@ -207,8 +223,51 @@ const executeSync = async () => {
 }
 
 onMounted(() => {
-  if (!csvStore.uploadData || !csvStore.mappingConfig.email) {
-    ElMessage.warning('必要な情報が不足しています')
+  // Check sessionStorage directly
+  const sessionData = sessionStorage.getItem('csv')
+  let parsedSessionData = null
+  try {
+    parsedSessionData = sessionData ? JSON.parse(sessionData) : null
+  } catch (e) {
+    logger.error('Failed to parse session data', e)
+  }
+  
+  logger.info('SyncConfirm mounted', {
+    hasUploadData: !!csvStore.uploadData,
+    uploadData: csvStore.uploadData,
+    mappingConfig: csvStore.mappingConfig,
+    emailMapping: csvStore.mappingConfig?.email,
+    sessionStorageData: parsedSessionData,
+    directMappingConfig: csvStore.getMappingConfig()
+  })
+  
+  if (!csvStore.uploadData) {
+    logger.error('Missing upload data', {
+      uploadData: csvStore.uploadData,
+      storeState: {
+        uploadData: csvStore.uploadData,
+        mappingConfig: csvStore.mappingConfig,
+        savedMappings: csvStore.savedMappings
+      }
+    })
+    ElMessage.warning('必要な情報が不足しています：CSVデータがありません')
+    router.push('/upload')
+    return
+  }
+  
+  if (!csvStore.mappingConfig.email && csvStore.mappingConfig.email !== 0) {
+    logger.error('Missing email mapping', {
+      mappingConfig: csvStore.mappingConfig,
+      emailValue: csvStore.mappingConfig?.email,
+      emailType: typeof csvStore.mappingConfig?.email,
+      allMappingValues: {
+        name: csvStore.mappingConfig?.name,
+        email: csvStore.mappingConfig?.email,
+        position: csvStore.mappingConfig?.position,
+        department: csvStore.mappingConfig?.department
+      }
+    })
+    ElMessage.warning('必要な情報が不足しています：メールアドレスのマッピングが設定されていません')
     router.push('/upload')
     return
   }

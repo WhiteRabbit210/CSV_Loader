@@ -1,0 +1,18 @@
+'Log files:
+/Users/whiterabbit/Project/CSV_Loader/frontend/.npm-cache/_logs/2025-06-20T05_21_44_102Z-debug-0.log
+
+# npm resolution error report
+
+While resolving: csv-loader-frontend@1.0.0
+Found: pinia@2.3.1
+node_modules/pinia
+  pinia@"^2.1.6" from the root project
+
+Could not resolve dependency:
+peerOptional pinia@">=3.0.0" from pinia-plugin-persistedstate@4.3.0
+node_modules/pinia-plugin-persistedstate
+  pinia-plugin-persistedstate@"*" from the root project
+
+Fix the upstream dependency conflict, or retry
+this command with --force or --legacy-peer-deps
+to accept an incorrect (and potentially broken) dependency resolution.

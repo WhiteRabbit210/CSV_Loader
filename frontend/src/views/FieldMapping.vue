@@ -61,6 +61,7 @@
                     :placeholder="`${field.label}に対応するCSVカラムを選択`"
                     clearable
                     style="width: calc(100% - 40px); margin-right: 5px;"
+                    popper-class="field-mapping-dropdown"
                   >
                     <el-option
                       v-for="(header, index) in csvHeaders"
@@ -69,8 +70,8 @@
                       :value="index"
                     >
                       <div class="option-content">
-                        <span>{{ header }}</span>
-                        <el-tag size="small" type="info">{{ getSampleData(index) }}</el-tag>
+                        <span class="column-name">{{ header }}</span>
+                        <el-tag size="small" type="info" class="sample-data">{{ getSampleData(index) }}</el-tag>
                       </div>
                     </el-option>
                   </el-select>
@@ -92,6 +93,7 @@
                       :placeholder="`フィールド${idx + 1}を選択`"
                       clearable
                       style="width: calc(100% - 80px); margin-right: 5px;"
+                      popper-class="field-mapping-dropdown"
                     >
                       <el-option
                         v-for="(header, index) in csvHeaders"
@@ -100,8 +102,8 @@
                         :value="index"
                       >
                         <div class="option-content">
-                          <span>{{ header }}</span>
-                          <el-tag size="small" type="info">{{ getSampleData(index) }}</el-tag>
+                          <span class="column-name">{{ header }}</span>
+                          <el-tag size="small" type="info" class="sample-data">{{ getSampleData(index) }}</el-tag>
                         </div>
                       </el-option>
                     </el-select>
@@ -181,23 +183,33 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch, getCurrentInstance } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useCsvStore } from '@/stores/csv'
 
 const router = useRouter()
 const csvStore = useCsvStore()
+const instance = getCurrentInstance()
+const logger = instance.appContext.config.globalProperties.$logger
 
 const selectedSavedMapping = ref(null)
 const mappingName = ref('')
 const loading = ref(false)
+
 // Initialize with existing mapping config from store if available
+const storedConfig = csvStore.mappingConfig
+logger.info('Initializing mapping config from store', {
+  storedConfig,
+  emailValue: storedConfig?.email,
+  emailType: typeof storedConfig?.email
+})
+
 const mappingConfig = ref({
-  name: csvStore.mappingConfig.name,
-  email: csvStore.mappingConfig.email,
-  position: csvStore.mappingConfig.position,
-  department: csvStore.mappingConfig.department
+  name: storedConfig.name !== undefined ? storedConfig.name : null,
+  email: storedConfig.email !== undefined ? storedConfig.email : null,
+  position: storedConfig.position !== undefined ? storedConfig.position : null,
+  department: storedConfig.department !== undefined ? storedConfig.department : null
 })
 
 const systemFields = [
@@ -332,7 +344,19 @@ const proceedToConfirm = () => {
     return
   }
   
+  logger.info('Proceeding to confirmation', {
+    mappingConfig: mappingConfig.value,
+    uploadData: csvStore.uploadData,
+    sessionId: csvStore.uploadData?.session_id
+  })
+  
   csvStore.setMappingConfig(mappingConfig.value)
+  
+  logger.info('Mapping config saved to store', {
+    storedMappingConfig: csvStore.mappingConfig,
+    emailMapping: csvStore.mappingConfig.email
+  })
+  
   loading.value = true
   setTimeout(() => {
     router.push('/confirm')
@@ -341,10 +365,21 @@ const proceedToConfirm = () => {
 
 // Watch for mapping changes and save to store
 watch(mappingConfig, (newValue) => {
+  logger.debug('Mapping config changed', {
+    newValue,
+    emailMapping: newValue.email
+  })
   csvStore.setMappingConfig(newValue)
 }, { deep: true })
 
 onMounted(() => {
+  logger.info('FieldMapping mounted', {
+    hasUploadData: !!csvStore.uploadData,
+    uploadData: csvStore.uploadData,
+    existingMappingConfig: csvStore.mappingConfig,
+    initialMappingConfig: mappingConfig.value
+  })
+  
   if (!csvStore.uploadData) {
     ElMessage.warning('CSVファイルがアップロードされていません')
     router.push('/upload')
@@ -432,14 +467,24 @@ onBeforeUnmount(() => {
   .csv-field {
     .option-content {
       display: flex;
-      justify-content: space-between;
       align-items: center;
       width: 100%;
+      gap: 10px;
       
-      .el-tag {
-        max-width: 200px;
+      .column-name {
+        flex: 0 0 200px;
+        min-width: 200px;
         overflow: hidden;
         text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      
+      .sample-data {
+        flex: 1;
+        max-width: 250px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     }
     
@@ -479,5 +524,40 @@ onBeforeUnmount(() => {
   margin-top: 30px;
   display: flex;
   justify-content: space-between;
+}
+</style>
+
+<style lang="scss">
+// Global styles for dropdown (unscoped)
+.field-mapping-dropdown {
+  .el-select-dropdown__item {
+    height: auto;
+    padding: 8px 12px;
+    
+    .option-content {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      gap: 10px;
+      
+      .column-name {
+        flex: 0 0 200px;
+        min-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: right;
+        padding-right: 10px;
+      }
+      
+      .sample-data {
+        flex: 1;
+        max-width: 250px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
 }
 </style>

@@ -17,6 +17,11 @@ export const useCsvStore = defineStore('csv', () => {
   }
 
   function setMappingConfig(config) {
+    console.log('[CSV Store] Setting mapping config:', {
+      config,
+      emailValue: config?.email,
+      previousValue: mappingConfig.value
+    })
     mappingConfig.value = config
   }
 
@@ -51,6 +56,12 @@ export const useCsvStore = defineStore('csv', () => {
     syncResults.value = null
   }
 
+  // Debug getter to check mapping config
+  const getMappingConfig = () => {
+    console.log('[CSV Store] Getting mapping config:', mappingConfig.value)
+    return mappingConfig.value
+  }
+
   return {
     uploadData,
     mappingConfig,
@@ -61,6 +72,7 @@ export const useCsvStore = defineStore('csv', () => {
     addSavedMapping,
     loadSavedMapping,
     setSyncResults,
-    reset
+    reset,
+    getMappingConfig
   }
 })
