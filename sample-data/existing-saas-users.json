@@ -1,0 +1,65 @@
+{
+  "users": [
+    {
+      "id": "entra-001-a1b2c3d4e5f6",
+      "email": "tanaka.taro@example.com",
+      "position": "部長",
+      "department": "営業部"
+    },
+    {
+      "id": "cognito-002-g7h8i9j0k1l2",
+      "email": "suzuki.hanako@example.com",
+      "position": "主任",
+      "department": "経理部"
+    },
+    {
+      "id": "entra-003-m3n4o5p6q7r8",
+      "email": "yamamoto.ichiro@example.com",
+      "position": "課長",
+      "department": "技術部"
+    },
+    {
+      "id": "cognito-004-s9t0u1v2w3x4",
+      "email": "sato.yuki@example.com",
+      "position": "一般社員",
+      "department": "人事部"
+    },
+    {
+      "id": "entra-005-y5z6a7b8c9d0",
+      "email": "takahashi.kenji@example.com",
+      "position": "係長",
+      "department": "営業部"
+    },
+    {
+      "id": "cognito-006-e1f2g3h4i5j6",
+      "email": "watanabe.mai@example.com",
+      "position": "一般社員",
+      "department": "技術部"
+    },
+    {
+      "id": "entra-007-k7l8m9n0o1p2",
+      "email": "ito.hiroshi@example.com",
+      "position": "次長",
+      "department": "総務部"
+    },
+    {
+      "id": "cognito-008-q3r4s5t6u7v8",
+      "email": "nakamura.emi@example.com",
+      "position": "主任",
+      "department": "営業部"
+    },
+    {
+      "id": "entra-009-w9x0y1z2a3b4",
+      "email": "kobayashi.takeshi@example.com",
+      "position": "一般社員",
+      "department": "経理部"
+    },
+    {
+      "id": "cognito-010-c5d6e7f8g9h0",
+      "email": "yoshida.akiko@example.com",
+      "position": "課長",
+      "department": "人事部"
+    }
+  ],
+  "lastUpdated": "2024-01-15T10:30:00Z"
+}

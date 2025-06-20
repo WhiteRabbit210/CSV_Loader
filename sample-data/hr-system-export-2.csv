@@ -1,0 +1,13 @@
+社員番号,社員名（漢字）,社員名（カナ）,Eメール,部門コード,部門名,職位コード,職位名
+E001,田中太郎,タナカタロウ,tanaka.taro@example.com,S001,営業部,P005,部長
+E002,鈴木花子,スズキハナコ,suzuki.hanako@example.com,A001,経理部,P003,係長
+E003,山本一郎,ヤマモトイチロウ,yamamoto.ichiro@example.com,T001,技術部,P004,課長
+E004,高橋健二,タカハシケンジ,takahashi.kenji@example.com,S001,営業部,P003,係長
+E005,渡辺舞,ワタナベマイ,watanabe.mai@example.com,T001,技術部,P001,一般社員
+E006,中村恵美,ナカムラエミ,nakamura.emi@example.com,S001,営業部,P002,主任
+E007,小林武,コバヤシタケシ,kobayashi.takeshi@example.com,A001,経理部,P002,主任
+E008,吉田明子,ヨシダアキコ,yoshida.akiko@example.com,H001,人事部,P004,課長
+E009,田中次郎,タナカジロウ,tanaka.jiro@example.com,T001,技術部,P001,一般社員
+E010,山田花子,ヤマダハナコ,yamada.hanako@example.com,S001,営業部,P001,一般社員
+E011,佐々木太郎,ササキタロウ,sasaki.taro@example.com,G001,総務部,P003,係長
+E012,鈴木一郎,スズキイチロウ,suzuki.ichiro@example.com,T001,技術部,P002,主任
