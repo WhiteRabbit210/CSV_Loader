@@ -22,7 +22,12 @@
         />
         
         <div class="summary-cards">
-          <el-card shadow="hover" class="summary-card add-card">
+          <el-card 
+            shadow="hover" 
+            class="summary-card add-card" 
+            :class="{ active: activeTab === 'add' }"
+            @click="handleCardClick('add')"
+          >
             <div class="card-content">
               <el-icon class="card-icon"><user-filled /></el-icon>
               <div class="card-info">
@@ -32,7 +37,12 @@
             </div>
           </el-card>
           
-          <el-card shadow="hover" class="summary-card update-card">
+          <el-card 
+            shadow="hover" 
+            class="summary-card update-card"
+            :class="{ active: activeTab === 'update' }"
+            @click="handleCardClick('update')"
+          >
             <div class="card-content">
               <el-icon class="card-icon"><refresh /></el-icon>
               <div class="card-info">
@@ -42,7 +52,12 @@
             </div>
           </el-card>
           
-          <el-card shadow="hover" class="summary-card delete-card">
+          <el-card 
+            shadow="hover" 
+            class="summary-card delete-card"
+            :class="{ active: activeTab === 'delete' }"
+            @click="handleCardClick('delete')"
+          >
             <div class="card-content">
               <el-icon class="card-icon"><delete /></el-icon>
               <div class="card-info">
@@ -180,6 +195,15 @@ const loadSyncPreview = async () => {
       newUsers.value = response.data.newUsers || []
       updateUsers.value = response.data.updateUsers || []
       deleteUsers.value = response.data.deleteUsers || []
+      
+      // 最初のタブを自動的に選択
+      if (newUsers.value.length > 0) {
+        activeTab.value = 'add'
+      } else if (updateUsers.value.length > 0) {
+        activeTab.value = 'update'
+      } else if (deleteUsers.value.length > 0) {
+        activeTab.value = 'delete'
+      }
     }
   } catch (error) {
     logger.error('Failed to load sync preview', error, {
@@ -192,6 +216,17 @@ const loadSyncPreview = async () => {
 
 const goBack = () => {
   router.push('/mapping')
+}
+
+const handleCardClick = (tabName) => {
+  // タブが存在する場合のみアクティブにする
+  if (
+    (tabName === 'add' && newUsers.value.length > 0) ||
+    (tabName === 'update' && updateUsers.value.length > 0) ||
+    (tabName === 'delete' && deleteUsers.value.length > 0)
+  ) {
+    activeTab.value = tabName
+  }
 }
 
 const executeSync = async () => {
@@ -299,19 +334,45 @@ onMounted(() => {
   }
   
   .summary-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    &.active {
+      border-width: 2px;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
     &.add-card {
       --el-card-border-color: #67c23a;
       .card-icon { color: #67c23a; }
+      
+      &.active {
+        background-color: #f0f9ff;
+      }
     }
     
     &.update-card {
       --el-card-border-color: #409eff;
       .card-icon { color: #409eff; }
+      
+      &.active {
+        background-color: #f0f9ff;
+      }
     }
     
     &.delete-card {
       --el-card-border-color: #f56c6c;
       .card-icon { color: #f56c6c; }
+      
+      &.active {
+        background-color: #fef0f0;
+      }
     }
     
     .card-content {

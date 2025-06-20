@@ -14,6 +14,7 @@
       </template>
 
       <el-upload
+        v-if="!fileUploaded"
         class="upload-demo"
         drag
         :action="uploadUrl"
@@ -37,6 +38,16 @@
           </div>
         </template>
       </el-upload>
+
+      <div v-if="fileUploaded && !csvPreview.length" class="upload-status">
+        <el-icon class="is-loading"><loading /></el-icon>
+        <p>ファイルを処理中...</p>
+      </div>
+
+      <div v-if="fileUploaded && csvPreview.length > 0" class="upload-status success">
+        <el-icon><circle-check /></el-icon>
+        <p>アップロード完了: {{ fileList[0]?.name || 'CSVファイル' }}</p>
+      </div>
 
       <div v-if="csvPreview.length > 0" class="csv-preview">
         <h3>CSVプレビュー（先頭10行）</h3>
@@ -65,6 +76,7 @@
 import { ref, getCurrentInstance } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { UploadFilled, ArrowRight, Loading, CircleCheck } from '@element-plus/icons-vue'
 import { useCsvStore } from '@/stores/csv'
 import http from '@/utils/http'
 import { apiConfig } from '@/config/api'
@@ -98,9 +110,10 @@ const beforeUpload = (file) => {
   return true
 }
 
-const handleChange = async (file, fileList) => {
+const handleChange = async (file, fileListParam) => {
   if (file.raw) {
     logger.info('File selected', { filename: file.name, size: file.size })
+    fileList.value = fileListParam
     await uploadFile(file.raw)
   }
 }
@@ -181,6 +194,28 @@ const proceedToMapping = () => {
 
 .upload-demo {
   margin: 20px 0;
+}
+
+.upload-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 40px 0;
+  font-size: 16px;
+  color: #606266;
+  
+  .el-icon {
+    font-size: 24px;
+  }
+  
+  &.success {
+    color: #67c23a;
+    
+    .el-icon {
+      color: #67c23a;
+    }
+  }
 }
 
 .csv-preview {
