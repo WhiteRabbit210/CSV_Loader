@@ -181,7 +181,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useCsvStore } from '@/stores/csv'
@@ -192,11 +192,12 @@ const csvStore = useCsvStore()
 const selectedSavedMapping = ref(null)
 const mappingName = ref('')
 const loading = ref(false)
+// Initialize with existing mapping config from store if available
 const mappingConfig = ref({
-  name: null,
-  email: null,
-  position: null,
-  department: null
+  name: csvStore.mappingConfig.name,
+  email: csvStore.mappingConfig.email,
+  position: csvStore.mappingConfig.position,
+  department: csvStore.mappingConfig.department
 })
 
 const systemFields = [
@@ -320,6 +321,8 @@ const saveMapping = () => {
 }
 
 const goBack = () => {
+  // Save current mapping configuration to store before navigating
+  csvStore.setMappingConfig(mappingConfig.value)
   router.push('/upload')
 }
 
@@ -336,11 +339,21 @@ const proceedToConfirm = () => {
   }, 500)
 }
 
+// Watch for mapping changes and save to store
+watch(mappingConfig, (newValue) => {
+  csvStore.setMappingConfig(newValue)
+}, { deep: true })
+
 onMounted(() => {
   if (!csvStore.uploadData) {
     ElMessage.warning('CSVファイルがアップロードされていません')
     router.push('/upload')
   }
+})
+
+// Save mapping configuration before leaving the component
+onBeforeUnmount(() => {
+  csvStore.setMappingConfig(mappingConfig.value)
 })
 </script>
 
